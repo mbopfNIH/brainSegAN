@@ -3,14 +3,15 @@ import os.path as osp
 import numpy as np
 from glob import glob
 from PIL import Image
-from tqdm import tqdm
+#from tqdm import tqdm
 import torch
-import cPickle as pickle
+#import cPickle as pickle - MWB: couldn't install cPickle
+#import pickle
 from torchvision import transforms
 # from torchvision.transforms import Compose
 from transform import ToTensor, RangeNormalize, RandomFlip, Compose, CenterCrop
-import collections
-import random
+#import collections
+#import random
 
 def makedirs(path):
     if not os.path.exists(path):

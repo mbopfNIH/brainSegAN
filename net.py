@@ -1,4 +1,5 @@
 # from __future__ import division
+from __future__ import division, print_function, unicode_literals   #MWB: added; previous line was already commented out
 import torch.nn as nn
 import torch.nn.functional as F
 import torch
@@ -14,8 +15,11 @@ unet = 1
 class GlobalConvBlock(nn.Module):
     def __init__(self, in_dim, out_dim, kernel_size):
         super(GlobalConvBlock, self).__init__()
-        pad0 = (kernel_size[0] - 1) / 2
-        pad1 = (kernel_size[1] - 1) / 2
+        # MWB - Switch to explicit integer division for Python 3.6
+#        pad0 = (kernel_size[0] - 1) / 2
+#        pad1 = (kernel_size[1] - 1) / 2
+        pad0 = (kernel_size[0] - 1) // 2
+        pad1 = (kernel_size[1] - 1) // 2
         # kernel size had better be odd number so as to avoid alignment error
         self.conv_l1 = nn.Conv2d(in_dim, out_dim, kernel_size=(kernel_size[0], 1),
                                  padding=(pad0, 0), bias=False)

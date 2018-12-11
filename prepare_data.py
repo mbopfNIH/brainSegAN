@@ -44,7 +44,7 @@ def sitk_show(img, title=None, margin=0.05, dpi=40):
 
 class Preprocess(object):
     def __init__(self, path, n4itk = True, normalize = True, cnt = 0):
-        self.path = '/A/Brats/data/train/' + path
+        self.path = './data/BRATS2015_Training/' + path
         self.n4itk = n4itk
         self.normalize = normalize
         self.cnt = cnt

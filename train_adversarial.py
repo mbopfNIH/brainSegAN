@@ -1,42 +1,52 @@
 #export CUDA_DEVICE_ORDER=PCI_BUS_ID
 #CUDA_VISIBLE_DEVICES=X python train_basemodel.py --cuda --outpath ./outputs
-from __future__ import print_function
+#from __future__ import print_function #MWB
+from __future__ import division, print_function, unicode_literals
 import argparse
 import os
-from glob import glob
-from tqdm import trange
-from itertools import chain
+#from glob import glob
+#from tqdm import trange
+#from itertools import chain
 import numpy as np
-from PIL import Image
+#from PIL import Image
 import torch
 import torch.nn.parallel
-from torch.utils import data
+#from torch.utils import data
 import torch.backends.cudnn as cudnn
 import torch.optim as optim
-from torch import nn
+#from torch import nn
 import torch.nn.parallel
-import torchvision.utils as vutils
+#import torchvision.utils as vutils
 from torch.autograd import Variable
 from transform import ReLabel, ToLabel, Scale, Colorize, HorizontalFlip, VerticalFlip
-from torchvision.transforms import Compose, CenterCrop, Normalize, ToTensor
+#from torchvision.transforms import Compose, CenterCrop, Normalize, ToTensor
 import torch.nn.functional as F
 # from net import NetG, NetD
 from net import NetD, NetG
 from LoadData import Dataset, loader, Dataset_val
 from logger import Logger
-from torch.optim.optimizer import Optimizer
+#from torch.optim.optimizer import Optimizer
 
+# MWB - debug
+import sys
+print('__Python VERSION:', sys.version)
+print('__pyTorch VERSION:', torch.__version__)
+print('__CUDNN VERSION:', torch.backends.cudnn.version())
+print('__Number CUDA Devices:', torch.cuda.device_count())
+print('Active CUDA Device: GPU', torch.cuda.current_device())
+print ('Available devices ', torch.cuda.device_count())
+# MWB - end debug
 
 # Training settings
 parser = argparse.ArgumentParser(description='An Example')
 parser.add_argument('--batchsize', type=int, default=15, help='training batch size')
 #parser.add_argument('--testBatchSize', type=int, default=10, help='testing batch size')
-parser.add_argument('--niter', type=int, default=10000, help='number of epochs to train for')
+parser.add_argument('--niter', type=int, default=500, help='number of epochs to train for')
 parser.add_argument('--lr', type=float, default=0.01, help='Learning Rate. Default=0.02')
 parser.add_argument('--ngpu', type=int, default=1, help='number of GPUs to use')
 parser.add_argument('--beta1', type=float, default=0.5, help='beta1 for adam. default=0.5')
 parser.add_argument('--decay', type=float, default=0.5, help='Learning rate decay. default=0.5')
-parser.add_argument('--cuda', action='store_true', help='usNonee cuda?')
+parser.add_argument('--cuda', action='store_true', help='use cuda?')
 parser.add_argument('--adversarial', action='store_true', help='adversarial training?')
 #parser.add_argument('--threads', type=int, default=4, help='number of threads for data loader to use')
 parser.add_argument('--seed', type=int, default=666, help='random seed to use. Default=666')
@@ -194,7 +204,8 @@ if Adversarial:
 
 dataloader = loader(Dataset('./'),opt.batchsize)
 
-dataloader_val = loader(Dataset_val('./'), 5)
+#dataloader_val = loader(Dataset_val('./'), 5)  # MWB
+dataloader_val = loader(Dataset_val('./'), opt.batchsize)
 
 
 max_iou = 0
@@ -205,6 +216,7 @@ logger = Logger(opt.outpath)
 
 for epoch in range(opt.niter):
     for i, data in enumerate(dataloader, 1):
+        print("MWB:dataloader===> Epoch:{}, i: {}".format(epoch, i))
         #train D
         netD.zero_grad()
         # netG.zero_grad()
@@ -392,7 +404,9 @@ for epoch in range(opt.niter):
         # netD.zero_grad()
         #loss_D = criterion(result, target_D)
         #if i % 50 == 0:
-        if i % 50 == 1:
+        #if i % 50 == 1:
+        if i % 10 == 1:  # MWB - more frequent output
+            print("MWB:mod 10 == 1 ===> Epoch:{}, i: {}".format(epoch, i))
             dice_score = to_np(dice_score)
             print("===> Epoch[{}]({}/{}): Batch Dice 1: {:.4f}".format(epoch, i, len(dataloader), 1 - dice_score[1]))
             print("===> Epoch[{}]({}/{}): Batch Dice 2: {:.4f}".format(epoch, i, len(dataloader), 1 - dice_score[2]))
@@ -467,6 +481,7 @@ for epoch in range(opt.niter):
     if epoch % 1 == 0:
         IoUs, dices, accs = [], [], []
         for i, data in enumerate(dataloader_val, 1):
+            print("MWB:dataloader_val===> Epoch:{}, i: {}".format(epoch, i))
             input= Variable(data)[:,0:4,:,:]
             images= Variable(data)[:,3,:,:]
             target= Variable(data)[:,4,:,:]

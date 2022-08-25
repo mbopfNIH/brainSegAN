@@ -1,4 +1,4 @@
-> NOTE: This code was originally written by Yuan Xue and Sharon Huang at Lehigh University. I have put this into a GitHub repository so I can maintain configuration control of the code. - Mike Bopf
+> NOTE: This code was originally written by Yuan Xue and Sharon Huang at Lehigh University. I have put this into a GitHub repository so I can maintain configuration control of the code while I make changes to get it to work in the NLM/Lister Hill Center environment - Mike Bopf
 
 # Semantic segmentation with Adversarial Training for brain tumor
 
